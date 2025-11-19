@@ -1,0 +1,96 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+}
+
+.body-with-padding {
+  padding-top: 80px;
+}
+
+.navbar-nav .nav-link {
+  background: #0d6efd;
+  color: #fff !important;
+  padding: 8px 18px;
+  border-radius: 6px;
+  margin-left: 12px;
+  transition: 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+}
+
+.navbar-nav .nav-link:hover {
+  background: #0b5ed7;
+}
+
+.contact-nav {
+  min-height: 50px !important;
+  padding: 0.25rem 0 !important;
+}
+
+.contact-nav .navbar-brand {
+  font-size: 1.5rem !important;
+}
+
+.hero-section {
+  height: 90vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+    url("../images/background.jpeg") center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.hero-destinations {
+  background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e")
+    center/cover no-repeat;
+  height: 300px;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.about-hero {
+  background: url("../images/about-bg.jpg") center/cover no-repeat;
+  height: 300px;
+}
+
+.destination-card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.confirmation-page {
+  padding-top: 4rem;
+  background-color: #f8f9fa;
+}
+
+.confirmation-header {
+  margin-bottom: 2rem;
+}
+
+.confirmation-container {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.confirmation-card p {
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+footer {
+  background-color: #212529;
+  color: #ffffff;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
