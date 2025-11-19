@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Travelora | My Bookings</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-light">
+
+  <header class="bg-primary text-white shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center py-3">
+      <h1 class="h3 mb-0">✈️ My Bookings</h1>
+      <a href="index.html" class="btn btn-light fw-semibold">🏠 Back to Home</a>
+    </div>
+  </header>
+
+  <main class="container my-5">
+    <section class="text-center mb-5">
+      <h2 class="fw-bold mb-2">Your Saved Trips</h2>
+      <p class="text-muted fs-6 mx-auto" style="max-width: 540px;">Below are all your confirmed bookings. You can download your receipts or clear all records.</p>
+      <button id="clear-all" class="btn btn-danger mt-3 px-4 py-2 fw-semibold shadow-sm" type="button">🗑 Clear All Bookings</button>
+    </section>
+
+    <div id="bookings-list" class="row g-4 justify-content-center" aria-live="polite" aria-label="List of saved bookings">
+    </div>
+  </main>
+
+  <footer class="bg-dark text-center text-white py-3">
+    <p class="mb-0">© 2025 Travelora. All Rights Reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/jspdf.umd.min.js"></script>
+  <script src="js/travel.js"></script>
+</body>
+</html>
