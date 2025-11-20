@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isNaN(diff) || diff <= 0) return 0;
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
-
   const escapeHtml = (str) =>
     String(str ?? "")
       .replace(/&/g, "&amp;")
@@ -125,11 +124,9 @@ document.addEventListener("DOMContentLoaded", () => {
         endEl.value = addOneDay(startEl.value);
       }
     }
-
     updateBasePrice();
     fixEndDate();
     updateTotal();
-
     destEl.addEventListener("change", () => {
       updateBasePrice();
       updateTotal();
@@ -178,15 +175,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const days = calcDays(booking.startDate, booking.endDate);
       if (days <= 0) return alert("End date must be after start date.");
-
       booking.days = days;
       booking.totalCost = booking.basePrice * booking.travelers * days;
-
       const saved = JSON.parse(localStorage.getItem("bookings")) || [];
       saved.push(booking);
       localStorage.setItem("bookings", JSON.stringify(saved));
       localStorage.setItem("latestBooking", JSON.stringify(booking));
-
       [
         "fullName",
         "email",
@@ -272,29 +266,29 @@ document.addEventListener("DOMContentLoaded", () => {
         card.className = "col-12 col-md-8 col-lg-6 mb-3";
 
         card.innerHTML = `
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">${escapeHtml(b.destination)}</h5>
-              <p class="card-text mb-1"><strong>Name:</strong> ${escapeHtml(
-                b.fullName
-              )}</p>
-              <p class="card-text mb-1"><strong>Email:</strong> ${escapeHtml(
-                b.email
-              )}</p>
-              <p class="card-text mb-1"><strong>Travelers:</strong> ${
-                b.travelers
-              }</p>
-              <p class="card-text mb-1"><strong>Dates:</strong> ${formatDate(
-                b.startDate
-              )} → ${formatDate(b.endDate)}</p>
-              <p class="card-text mb-3"><strong>Total Cost:</strong> $${b.totalCost.toLocaleString()}</p>
-              <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-danger btn-sm delete-btn">Delete</button>
-                <button class="btn btn-primary btn-sm download-btn">Download Receipt</button>
-              </div>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">${escapeHtml(b.destination)}</h5>
+                    <p class="card-text mb-1"><strong>Name:</strong> ${escapeHtml(
+                      b.fullName
+                    )}</p>
+                    <p class="card-text mb-1"><strong>Email:</strong> ${escapeHtml(
+                      b.email
+                    )}</p>
+                    <p class="card-text mb-1"><strong>Travelers:</strong> ${
+                      b.travelers
+                    }</p>
+                    <p class="card-text mb-1"><strong>Dates:</strong> ${formatDate(
+                      b.startDate
+                    )} → ${formatDate(b.endDate)}</p>
+                    <p class="card-text mb-3"><strong>Total Cost:</strong> $${b.totalCost.toLocaleString()}</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                        <button class="btn btn-primary btn-sm download-btn">Download Receipt</button>
+                    </div>
+                </div>
             </div>
-          </div>
-        `;
+            `;
 
         card.querySelector(".delete-btn").addEventListener("click", () => {
           bookings.splice(i, 1);
@@ -369,9 +363,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (headerBox && user) {
       headerBox.innerHTML = `
-        Welcome, <strong>${user.name}</strong> 👋
-        <button class="btn btn-sm btn-outline-light ms-3" id="logoutBtn">Logout</button>
-      `;
+            Welcome, <strong>${user.name}</strong> 👋
+            <button class="btn btn-sm btn-outline-light ms-3" id="logoutBtn">Logout</button>
+            `;
       $("logoutBtn").addEventListener("click", logoutUser);
     }
   }
@@ -426,9 +420,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (box && user) {
       box.innerHTML = `
-        <p class="fs-5"><strong>Name:</strong> ${user.name}</p>
-        <p class="fs-5"><strong>Email:</strong> ${user.email}</p>
-      `;
+            <p class="fs-5"><strong>Name:</strong> ${user.name}</p>
+            <p class="fs-5"><strong>Email:</strong> ${user.email}</p>
+            `;
     }
   }
 
@@ -500,9 +494,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (profileBox) {
     profileBox.innerHTML = `
-      <p><strong>Name:</strong> ${user.name}</p>
-      <p><strong>Email:</strong> ${user.email}</p>
-    `;
+            <p><strong>Name:</strong> ${user.name}</p>
+            <p><strong>Email:</strong> ${user.email}</p>
+            `;
   }
 
   if (logoutBtn) {
