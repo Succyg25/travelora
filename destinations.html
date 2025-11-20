@@ -1,62 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Destinations | Travelora</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Destinations | Travelora</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
 
-  <header class="hero-destinations d-flex align-items-center justify-content-center text-white">
-    <h1 class="fw-bold">Top Destinations</h1>
-  </header>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
 
-  <main class="container py-5">
-    <div class="row g-4">
+            <a class="navbar-brand fw-bold" href="index.html">Travelora</a>
 
-      <div class="col-md-4">
-        <div class="card shadow-sm destination-card">
-          <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c" class="card-img-top" alt="Paris">
-          <div class="card-body">
-            <h5 class="card-title">Paris, France</h5>
-            <p class="card-text">Experience the romance, culture, and beauty of the City of Light.</p>
-            <a href="booking.html" class="btn btn-primary w-100">Book Now</a>
-          </div>
+            <!-- Home and Profile links -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item" id="profileNavItem" style="display:none;">
+                    <a class="nav-link" href="profile.html">Profile</a>
+                </li>
+            </ul>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item d-flex gap-2" id="navAuthLinks">
+                        <a class="nav-link" href="login.html">Login</a>
+                        <a class="nav-link" href="signup.html">Signup</a>
+                    </li>
+
+                    <li class="nav-item dropdown d-none" id="navUserDropdown">
+                        <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button" data-bs-toggle="dropdown"
+                            id="navUserName"></a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+                            <li><a class="dropdown-item" href="mybookings.html">My Bookings</a></li>
+                            <li><a class="dropdown-item text-danger" id="logoutBtn">Logout</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+
         </div>
-      </div>
+    </nav>
 
-      <div class="col-md-4">
-        <div class="card shadow-sm destination-card">
-          <img src="https://images.unsplash.com/photo-1505761671935-60b3a7427bad" class="card-img-top" alt="Maldives">
-          <div class="card-body">
-            <h5 class="card-title">Maldives</h5>
-            <p class="card-text">Relax on white sandy beaches with crystal-clear turquoise waters.</p>
-            <a href="booking.html" class="btn btn-primary w-100">Book Now</a>
-          </div>
+    <header class="hero-destinations d-flex align-items-center justify-content-center text-white">
+        <h1 class="fw-bold">Top Destinations</h1>
+    </header>
+
+    <main class="container py-5">
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card shadow-sm destination-card">
+                    <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c" class="card-img-top"
+                        alt="Paris" />
+                    <div class="card-body">
+                        <h5 class="card-title">Paris, France</h5>
+                        <p class="card-text">Experience the romance, culture, and beauty of the City of Light.</p>
+                        <a href="booking.html" class="btn btn-primary w-100">Book Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm destination-card">
+                    <img src="https://images.unsplash.com/photo-1505761671935-60b3a7427bad" class="card-img-top"
+                        alt="Maldives" />
+                    <div class="card-body">
+                        <h5 class="card-title">Maldives</h5>
+                        <p class="card-text">Relax on white sandy beaches with crystal-clear turquoise waters.</p>
+                        <a href="booking.html" class="btn btn-primary w-100">Book Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm destination-card">
+                    <img src="images/dubai.jpg" class="card-img-top" alt="Dubai" />
+                    <div class="card-body">
+                        <h5 class="card-title">Dubai, UAE</h5>
+                        <p class="card-text">Luxury shopping, modern architecture, and vibrant nightlife.</p>
+                        <a href="booking.html" class="btn btn-primary w-100">Book Now</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
-      </div>
+    </main>
 
-      <div class="col-md-4">
-        <div class="card shadow-sm destination-card">
-          <img src="images/dubai.jpg" class="card-img-top" alt="Dubai">
-          <div class="card-body">
-            <h5 class="card-title">Dubai, UAE</h5>
-            <p class="card-text">Luxury shopping, modern architecture, and vibrant nightlife.</p>
-            <a href="booking.html" class="btn btn-primary w-100">Book Now</a>
-          </div>
-        </div>
-      </div>
+    <footer class="bg-dark text-center text-white py-3">
+        <p class="mb-0">© 2025 Travelora. All Rights Reserved.</p>
+    </footer>
 
-    </div>
-  </main>
-  <footer class="bg-dark text-center text-white py-3">
-    <p class="mb-0">© 2025 Travelora. All Rights Reserved.</p>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/travel.js"></script>
 </body>
+
 </html>

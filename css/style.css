@@ -1,96 +1,133 @@
+/* Reset & Base Styles */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
+margin: 0;
+padding: 0;
+font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+background-color: #f8f9fa;
 }
 
 .body-with-padding {
-  padding-top: 80px;
+padding-top: 80px;
+}
+
+/* Navbar Styling */
+.navbar-nav {
+display: flex;
+align-items: center;
 }
 
 .navbar-nav .nav-link {
-  background: #0d6efd;
-  color: #fff !important;
-  padding: 8px 18px;
-  border-radius: 6px;
-  margin-left: 12px;
-  transition: 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
+background: #0d6efd;
+color: #fff !important;
+padding: 8px 18px;
+border-radius: 6px;
+margin-left: 12px;
+height: 40px;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: background-color 0.3s ease, color 0.3s ease;
+text-decoration: none;
 }
 
 .navbar-nav .nav-link:hover {
-  background: #0b5ed7;
+background: #0b5ed7;
 }
 
+/* Login / Signup Buttons */
+#navAuthLinks .nav-link.btn-outline-light:hover {
+background-color: white;
+color: #0d6efd;
+}
+
+#navAuthLinks .btn-light:hover {
+background-color: #e6e6e6;
+}
+
+/* Dropdown */
+#navUserDropdown .dropdown-toggle {
+font-weight: 600;
+}
+
+.dropdown-menu {
+box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Navbar Toggler */
+.navbar-toggler {
+padding: 0.25rem 0.75rem;
+}
+
+/* Contact Nav (if applicable) */
 .contact-nav {
-  min-height: 50px !important;
-  padding: 0.25rem 0 !important;
+min-height: 50px !important;
+padding: 0.25rem 0 !important;
 }
 
 .contact-nav .navbar-brand {
-  font-size: 1.5rem !important;
+font-size: 1.5rem !important;
 }
 
+/* Hero Sections */
 .hero-section {
-  height: 90vh;
-  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
-    url("../images/background.jpeg") center/cover no-repeat;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  text-align: center;
+height: 90vh;
+background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+url("../images/background.jpeg") center/cover no-repeat;
+display: flex;
+justify-content: center;
+align-items: center;
+color: white;
+text-align: center;
 }
 
 .hero-destinations {
-  background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e")
-    center/cover no-repeat;
-  height: 300px;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e")
+center/cover no-repeat;
+height: 300px;
+text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .about-hero {
-  background: url("../images/about-bg.jpg") center/cover no-repeat;
-  height: 300px;
+background: url("../images/about-bg.jpg") center/cover no-repeat;
+height: 300px;
 }
 
+/* Destination Cards */
 .destination-card img {
-  height: 200px;
-  object-fit: cover;
+height: 200px;
+object-fit: cover;
 }
 
+/* Confirmation Page */
 .confirmation-page {
-  padding-top: 4rem;
-  background-color: #f8f9fa;
+padding-top: 4rem;
+background-color: #f8f9fa;
 }
 
 .confirmation-header {
-  margin-bottom: 2rem;
+margin-bottom: 2rem;
 }
 
 .confirmation-container {
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+max-width: 600px;
+margin-left: auto;
+margin-right: auto;
 }
 
 .confirmation-card p {
-  font-size: 1.125rem;
-  margin-bottom: 1rem;
+font-size: 1.125rem;
+margin-bottom: 1rem;
 }
 
+/* Footer */
 footer {
-  background-color: #212529;
-  color: #ffffff;
-  padding: 1rem 0;
-  text-align: center;
+background-color: #212529;
+color: #ffffff;
+padding: 1rem 0;
+text-align: center;
 }
 
 footer p {
-  margin: 0;
-  font-size: 0.9rem;
+margin: 0;
+font-size: 0.9rem;
 }

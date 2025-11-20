@@ -1,117 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Travelora | Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travelora | Dashboard</title>
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body class="bg-light">
 
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-    <div class="container">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
 
-      <a class="navbar-brand fw-bold" href="index.html">Travelora</a>
+            <a class="navbar-brand fw-bold fs-3" href="index.html">Travelora</a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto">
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto align-items-center">
 
-          <!-- Guest Links -->
-          <li class="nav-item d-flex gap-2" id="navAuthLinks">
-            <a class="nav-link" href="login.html">Login</a>
-            <a class="nav-link" href="signup.html">Signup</a>
-          </li>
+                    <!-- Auth Links -->
+                    <li class="nav-item d-flex gap-3" id="navAuthLinks">
+                        <a class="nav-link px-3 py-2 rounded btn btn-outline-light" href="login.html">Login</a>
+                        <a class="nav-link px-3 py-2 rounded btn btn-light text-primary fw-semibold"
+                            href="signup.html">Signup</a>
+                    </li>
 
-          <!-- Logged In User Dropdown -->
-          <li class="nav-item dropdown d-none" id="navUserDropdown">
-            <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button" data-bs-toggle="dropdown" id="navUserName"></a>
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown d-none" id="navUserDropdown">
+                        <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button" data-bs-toggle="dropdown"
+                            id="navUserName" aria-expanded="false"></a>
 
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-              <li><a class="dropdown-item" href="mybookings.html">My Bookings</a></li>
-              <li><a class="dropdown-item text-danger" id="logoutBtn">Logout</a></li>
-            </ul>
-          </li>
-
-        </ul>
-      </div>
-
-    </div>
-  </nav>
-
-  <!-- HERO SECTION -->
-  <header class="hero-section d-flex align-items-center text-white">
-    <div class="container text-center py-5">
-      <h1 class="display-4 fw-bold mb-3">Welcome to Travelora</h1>
-      <p class="lead mb-4">Your all-in-one travel dashboard. Book, explore, track trips & more.</p>
-
-      <a href="booking.html" class="btn btn-light btn-lg fw-semibold px-4 py-2">
-        Start Booking →
-      </a>
-    </div>
-  </header>
-
-  <!-- DASHBOARD CARDS -->
-  <main class="container my-5">
-    <h2 class="fw-bold text-center mb-4">Quick Actions</h2>
-
-    <div class="row g-4">
-
-      <!-- Card 1 -->
-      <div class="col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-          <div class="card-body text-center p-4">
-            <h4 class="fw-bold mb-3">Book a Trip</h4>
-            <p class="text-muted">Choose your dream destination and reserve your travel instantly.</p>
-            <a href="booking.html" class="btn btn-primary mt-3 px-4">Book Now</a>
-          </div>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+                            <li><a class="dropdown-item" href="mybookings.html">My Bookings</a></li>
+                            <li>
+                                <a class="dropdown-item text-danger" id="logoutBtn" href="#">Logout</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
+    </nav>
 
-      <!-- Card 2 -->
-      <div class="col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-          <div class="card-body text-center p-4">
-            <h4 class="fw-bold mb-3">My Bookings</h4>
-            <p class="text-muted">View, download receipts, or manage your previously booked trips.</p>
-            <a href="mybookings.html" class="btn btn-primary mt-3 px-4">View Bookings</a>
-          </div>
+
+    <!-- HERO SECTION -->
+    <header class="hero-section d-flex align-items-center text-white">
+        <div class="container text-center py-5">
+            <h1 class="display-4 fw-bold mb-3">Welcome to Travelora</h1>
+            <p class="lead mb-4">Your all-in-one travel dashboard. Book, explore, track trips & more.</p>
+
+            <a href="booking.html" class="btn btn-light btn-lg fw-semibold px-4 py-2">
+                Start Booking →
+            </a>
         </div>
-      </div>
+    </header>
 
-      <!-- Card 3 -->
-      <div class="col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-          <div class="card-body text-center p-4">
-            <h4 class="fw-bold mb-3">Destinations</h4>
-            <p class="text-muted">Explore popular travel locations and discover new places.</p>
-            <a href="destinations.html" class="btn btn-primary mt-3 px-4">Explore</a>
-          </div>
+    <!-- DASHBOARD CARDS -->
+    <main class="container my-5">
+        <h2 class="fw-bold text-center mb-4">Quick Actions</h2>
+
+        <div class="row g-4">
+
+            <!-- Card 1 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center p-4">
+                        <h4 class="fw-bold mb-3">Book a Trip</h4>
+                        <p class="text-muted">Choose your dream destination and reserve your travel instantly.</p>
+                        <a href="booking.html" class="btn btn-primary mt-3 px-4">Book Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center p-4">
+                        <h4 class="fw-bold mb-3">My Bookings</h4>
+                        <p class="text-muted">View, download receipts, or manage your previously booked trips.</p>
+                        <a href="mybookings.html" class="btn btn-primary mt-3 px-4">View Bookings</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center p-4">
+                        <h4 class="fw-bold mb-3">Destinations</h4>
+                        <p class="text-muted">Explore popular travel locations and discover new places.</p>
+                        <a href="destinations.html" class="btn btn-primary mt-3 px-4">Explore</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
-      </div>
+    </main>
 
-    </div>
-  </main>
+    <!-- FOOTER -->
+    <footer class="bg-dark text-center text-white py-3">
+        <p class="mb-0">© 2025 Travelora. All Rights Reserved.</p>
+    </footer>
 
-  <!-- FOOTER -->
-  <footer class="bg-dark text-center text-white py-3">
-    <p class="mb-0">© 2025 Travelora. All Rights Reserved.</p>
-  </footer>
-
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/travel.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/travel.js"></script>
 
 </body>
+
 </html>
