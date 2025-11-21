@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const qsa = (sel) => Array.from(document.querySelectorAll(sel));
 
   const safeText = (el, value) => el && (el.textContent = value);
-
   const isEmail = (v) => /^\S+@\S+\.\S+$/.test(v);
   const isDigits = (v) => /^\d+$/.test(v);
 
@@ -15,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isNaN(diff) || diff <= 0) return 0;
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
+
   const escapeHtml = (str) =>
     String(str ?? "")
       .replace(/&/g, "&amp;")
@@ -34,37 +34,125 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Navbar login/logout toggle
-  (function navbarUserToggle() {
-    const navAuthLinks = $("navAuthLinks");
-    const navUserDropdown = $("navUserDropdown");
-    const navUserName = $("navUserName");
-    const logoutBtn = $("logoutBtn");
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
+  const PUBLIC_PAGES = ["login.html", "register.html", "signup.html"];
+  const isPublicPage = PUBLIC_PAGES.includes(currentPage);
 
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
 
-    if (user && user.name) {
-      navAuthLinks?.classList.add("d-none");
-      navUserDropdown?.classList.remove("d-none");
-      if (navUserName) navUserName.textContent = user.name;
-    } else {
-      navAuthLinks?.classList.remove("d-none");
-      navUserDropdown?.classList.add("d-none");
-    }
+  if (!isPublicPage && !user) {
+    window.location.replace("login.html");
+    return;
+  }
 
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", () => {
-        localStorage.removeItem("loggedInUser");
-        location.reload();
-      });
-    }
-  })();
+  const navAuthLinks = $("navAuthLinks");
+  const navUserDropdown = $("navUserDropdown");
+  const navUserName = $("navUserName");
+  const profileNavItem = $("profileNavItem");
 
-  // Booking form
-  (function initBookingForm() {
-    const form = $("bookingForm");
-    if (!form) return;
+  if (user && user.name) {
+    navAuthLinks?.classList.add("d-none");
+    navUserDropdown?.classList.remove("d-none");
+    if (navUserName) navUserName.textContent = user.name;
+    if (profileNavItem) profileNavItem.style.display = "block";
+  } else {
+    navAuthLinks?.classList.remove("d-none");
+    navUserDropdown?.classList.add("d-none");
+    if (profileNavItem) profileNavItem.style.display = "none";
+  }
 
+  document.querySelectorAll("#logoutBtn, [data-logout]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "login.html";
+    });
+  });
+
+  const userInfo = $("user-info");
+  if (userInfo && user) {
+    userInfo.innerHTML = `Welcome, <strong>${escapeHtml(
+      user.name
+    )}</strong> 👋`;
+  }
+
+  if ($("profileBox") && user) {
+    $("profileBox").innerHTML = `
+      <p class="fs-5"><strong>Name:</strong> ${escapeHtml(user.name)}</p>
+      <p class="fs-5"><strong>Email:</strong> ${escapeHtml(user.email)}</p>
+    `;
+  }
+
+  const profileForm = $("profileForm");
+  if (profileForm && user) {
+    $("profileName").value = user.name;
+    $("profileEmail").value = user.email;
+
+    profileForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newName = $("profileName").value.trim();
+      const newEmail = $("profileEmail").value.trim();
+      const newPassword = $("profilePassword").value;
+
+      if (!newName || !newEmail) return alert("Name and email required.");
+      if (!isEmail(newEmail)) return alert("Invalid email.");
+
+      const updated = { ...user, name: newName, email: newEmail };
+      if (newPassword) updated.password = newPassword;
+
+      localStorage.setItem("traveloraUser", JSON.stringify(updated));
+      localStorage.setItem("loggedInUser", JSON.stringify(updated));
+
+      alert("Profile updated!");
+      $("profilePassword").value = "";
+
+      if (navUserName) navUserName.textContent = newName;
+      if (userInfo)
+        userInfo.innerHTML = `Welcome, <strong>${escapeHtml(
+          newName
+        )}</strong> 👋`;
+    });
+  }
+
+  const signupForm = $("signupForm");
+  if (signupForm) {
+    signupForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = $("signupName").value.trim();
+      const email = $("signupEmail").value.trim();
+      const password = $("signupPassword").value.trim();
+
+      if (!name || !email || !password) return alert("All fields required.");
+      if (!isEmail(email)) return alert("Invalid email.");
+
+      localStorage.setItem(
+        "traveloraUser",
+        JSON.stringify({ name, email, password })
+      );
+      alert("Account created! Please login.");
+      window.location.href = "login.html";
+    });
+  }
+
+  const loginForm = $("loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = $("loginEmail").value.trim();
+      const password = $("loginPassword").value.trim();
+
+      const saved = JSON.parse(localStorage.getItem("traveloraUser"));
+      if (!saved || saved.email !== email || saved.password !== password) {
+        alert("Invalid email or password!");
+        return;
+      }
+
+      localStorage.setItem("loggedInUser", JSON.stringify(saved));
+      window.location.href = "index.html";
+    });
+  }
+
+  const bookingForm = $("bookingForm");
+  if (bookingForm) {
     const nameEl = $("fullName") || $("name");
     const emailEl = $("email");
     const phoneEl = $("phone");
@@ -78,25 +166,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const updateBasePrice = () => {
       if (!destEl) return;
-      const selectedOption = destEl.options[destEl.selectedIndex];
-      if (selectedOption && selectedOption.dataset.price) {
-        basePriceEl.value = selectedOption.dataset.price;
-      } else {
-        basePriceEl.value = "";
-      }
+      const opt = destEl.options[destEl.selectedIndex];
+      basePriceEl.value = opt?.dataset.price || "";
     };
 
     const updateTotal = () => {
       const base = parseFloat(basePriceEl?.value) || 0;
       const travelers = parseInt(travelersEl?.value) || 1;
-      const days = calcDays(startEl?.value, endEl?.value);
-      let total = 0;
-      if (days > 0) {
-        total = base * travelers * days;
-      } else {
-        total = base * travelers;
-      }
-      if (totalEl)
+      const days = calcDays(startEl?.value, endEl?.value) || 1;
+      const total = base * travelers * days;
+
+      if (totalEl) {
         safeText(
           totalEl,
           `$${total.toLocaleString(undefined, {
@@ -104,46 +184,43 @@ document.addEventListener("DOMContentLoaded", () => {
             maximumFractionDigits: 2,
           })}`
         );
+      }
     };
 
-    function addOneDay(dateStr) {
-      if (!dateStr) return "";
-      const date = new Date(dateStr);
-      if (isNaN(date)) return "";
-      date.setDate(date.getDate() + 1);
-      return date.toISOString().split("T")[0];
-    }
+    const addOneDay = (dateStr) => {
+      const d = new Date(dateStr);
+      d.setDate(d.getDate() + 1);
+      return d.toISOString().split("T")[0];
+    };
 
-    function fixEndDate() {
-      if (!startEl || !endEl) return;
-      const startDate = new Date(startEl.value);
-      const endDate = new Date(endEl.value);
-
-      if (!startEl.value) return;
-      if (isNaN(endDate) || endDate <= startDate) {
+    const fixEndDate = () => {
+      if (!startEl?.value || !endEl) return;
+      const start = new Date(startEl.value);
+      const end = new Date(endEl.value);
+      if (isNaN(end) || end <= start) {
         endEl.value = addOneDay(startEl.value);
       }
-    }
+    };
+
     updateBasePrice();
     fixEndDate();
     updateTotal();
-    destEl.addEventListener("change", () => {
+
+    destEl?.addEventListener("change", () => {
       updateBasePrice();
       updateTotal();
     });
-
-    startEl.addEventListener("change", () => {
+    startEl?.addEventListener("change", () => {
       fixEndDate();
       updateTotal();
     });
-    endEl.addEventListener("change", () => {
+    endEl?.addEventListener("change", () => {
       fixEndDate();
       updateTotal();
     });
-
     travelersEl?.addEventListener("input", updateTotal);
 
-    form.addEventListener("submit", (e) => {
+    bookingForm.addEventListener("submit", (e) => {
       e.preventDefault();
 
       const booking = {
@@ -166,36 +243,28 @@ document.addEventListener("DOMContentLoaded", () => {
         !booking.destination ||
         !booking.startDate ||
         !booking.endDate
-      )
-        return alert("Please fill in all fields.");
-
-      if (!isEmail(booking.email)) return alert("Enter a valid email.");
-      if (!isDigits(booking.phone))
-        return alert("Phone must contain only digits.");
+      ) {
+        return alert("Please fill all fields.");
+      }
+      if (!isEmail(booking.email)) return alert("Invalid email.");
+      if (!isDigits(booking.phone)) return alert("Phone must be digits only.");
 
       const days = calcDays(booking.startDate, booking.endDate);
       if (days <= 0) return alert("End date must be after start date.");
+
       booking.days = days;
       booking.totalCost = booking.basePrice * booking.travelers * days;
-      const saved = JSON.parse(localStorage.getItem("bookings")) || [];
-      saved.push(booking);
-      localStorage.setItem("bookings", JSON.stringify(saved));
+
+      const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      bookings.push(booking);
+      localStorage.setItem("bookings", JSON.stringify(bookings));
       localStorage.setItem("latestBooking", JSON.stringify(booking));
-      [
-        "fullName",
-        "email",
-        "phone",
-        "destination",
-        "travelers",
-        "startDate",
-        "endDate",
-      ].forEach((id) => localStorage.removeItem("form_" + id));
 
       window.location.href = "confirmation.html";
     });
-  })();
+  }
 
-  (function initConfirmation() {
+  if (window.location.pathname.includes("confirmation.html")) {
     setTimeout(() => {
       const booking = JSON.parse(localStorage.getItem("latestBooking"));
       if (!booking) return;
@@ -219,12 +288,13 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       $("downloadReceipt")?.addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         doc.setFontSize(18);
         doc.text("Travelora Booking Receipt", 20, 25);
         doc.setFontSize(12);
-
-        const lines = [
+        let y = 45;
+        [
           `Name: ${booking.fullName}`,
           `Email: ${booking.email}`,
           `Destination: ${booking.destination}`,
@@ -233,62 +303,56 @@ document.addEventListener("DOMContentLoaded", () => {
           )}`,
           `Travelers: ${booking.travelers}`,
           `Total Cost: $${booking.totalCost.toLocaleString()}`,
-        ];
-
-        let y = 45;
-        lines.forEach((line) => {
+        ].forEach((line) => {
           doc.text(line, 20, y);
           y += 8;
         });
-
         doc.save("Travelora_Receipt.pdf");
       });
     }, 100);
-  })();
+  }
 
-  (function initMyBookings() {
-    const list = $("bookings-list");
-    const clearAllBtn = $("clear-all");
-    if (!list) return;
+  const bookingsList = $("bookings-list");
+  const clearAllBtn = $("clear-all");
 
+  if (bookingsList) {
     const renderBookings = () => {
       let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
       if (bookings.length === 0) {
-        list.innerHTML = `<p class="text-muted">No bookings found.</p>`;
+        bookingsList.innerHTML = `<p class="text-muted">No bookings found.</p>`;
         if (clearAllBtn) clearAllBtn.disabled = true;
         return;
       }
       if (clearAllBtn) clearAllBtn.disabled = false;
-      list.innerHTML = "";
 
+      bookingsList.innerHTML = "";
       bookings.forEach((b, i) => {
         const card = document.createElement("div");
         card.className = "col-12 col-md-8 col-lg-6 mb-3";
-
         card.innerHTML = `
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">${escapeHtml(b.destination)}</h5>
-                    <p class="card-text mb-1"><strong>Name:</strong> ${escapeHtml(
-                      b.fullName
-                    )}</p>
-                    <p class="card-text mb-1"><strong>Email:</strong> ${escapeHtml(
-                      b.email
-                    )}</p>
-                    <p class="card-text mb-1"><strong>Travelers:</strong> ${
-                      b.travelers
-                    }</p>
-                    <p class="card-text mb-1"><strong>Dates:</strong> ${formatDate(
-                      b.startDate
-                    )} → ${formatDate(b.endDate)}</p>
-                    <p class="card-text mb-3"><strong>Total Cost:</strong> $${b.totalCost.toLocaleString()}</p>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn btn-danger btn-sm delete-btn">Delete</button>
-                        <button class="btn btn-primary btn-sm download-btn">Download Receipt</button>
-                    </div>
-                </div>
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">${escapeHtml(b.destination)}</h5>
+              <p class="card-text mb-1"><strong>Name:</strong> ${escapeHtml(
+                b.fullName
+              )}</p>
+              <p class="card-text mb-1"><strong>Email:</strong> ${escapeHtml(
+                b.email
+              )}</p>
+              <p class="card-text mb-1"><strong>Travelers:</strong> ${
+                b.travelers
+              }</p>
+              <p class="card-text mb-1"><strong>Dates:</strong> ${formatDate(
+                b.startDate
+              )} → ${formatDate(b.endDate)}</p>
+              <p class="card-text mb-3"><strong>Total Cost:</strong> $${b.totalCost.toLocaleString()}</p>
+              <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                <button class="btn btn-primary btn-sm download-btn">Download Receipt</button>
+              </div>
             </div>
-            `;
+          </div>
+        `;
 
         card.querySelector(".delete-btn").addEventListener("click", () => {
           bookings.splice(i, 1);
@@ -297,37 +361,33 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         card.querySelector(".download-btn").addEventListener("click", () => {
+          const { jsPDF } = window.jspdf;
           const doc = new jsPDF();
-
           doc.setFontSize(18);
           doc.text("Travelora Booking Receipt", 20, 25);
           doc.setFontSize(12);
-
-          const lines = [
+          let y = 45;
+          [
             `Name: ${b.fullName}`,
             `Email: ${b.email}`,
             `Destination: ${b.destination}`,
             `Dates: ${formatDate(b.startDate)} - ${formatDate(b.endDate)}`,
             `Travelers: ${b.travelers}`,
             `Total Cost: $${b.totalCost.toLocaleString()}`,
-          ];
-
-          let y = 45;
-          lines.forEach((line) => {
+          ].forEach((line) => {
             doc.text(line, 20, y);
             y += 8;
           });
-
           doc.save(`Travelora_Receipt_${b.id || i}.pdf`);
         });
 
-        list.appendChild(card);
+        bookingsList.appendChild(card);
       });
     };
 
     if (clearAllBtn) {
       clearAllBtn.addEventListener("click", () => {
-        if (confirm("Are you sure you want to delete all bookings?")) {
+        if (confirm("Delete all bookings?")) {
           localStorage.removeItem("bookings");
           renderBookings();
         }
@@ -335,218 +395,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     renderBookings();
-  })();
-
-  function saveUser(name, email, password) {
-    const userData = { name, email, password };
-    localStorage.setItem("traveloraUser", JSON.stringify(userData));
-  }
-
-  function loginUser(email, password) {
-    const saved = JSON.parse(localStorage.getItem("traveloraUser"));
-    if (!saved) return false;
-    if (saved.email === email && saved.password === password) {
-      localStorage.setItem("loggedInUser", JSON.stringify(saved));
-      return true;
-    }
-    return false;
-  }
-
-  function logoutUser() {
-    localStorage.removeItem("loggedInUser");
-    window.location.href = "login.html";
-  }
-
-  function displayLoggedInUser() {
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
-    const headerBox = $("user-info");
-
-    if (headerBox && user) {
-      headerBox.innerHTML = `
-            Welcome, <strong>${user.name}</strong> 👋
-            <button class="btn btn-sm btn-outline-light ms-3" id="logoutBtn">Logout</button>
-            `;
-      $("logoutBtn").addEventListener("click", logoutUser);
-    }
-  }
-
-  displayLoggedInUser();
-
-  const signupForm = $("signupForm");
-  if (signupForm) {
-    signupForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const signupName = $("signupName");
-      const signupEmail = $("signupEmail");
-      const signupPassword = $("signupPassword");
-
-      saveUser(
-        signupName.value.trim(),
-        signupEmail.value.trim(),
-        signupPassword.value.trim()
-      );
-
-      alert("Account created successfully! Please login.");
-      window.location.href = "login.html";
-    });
-  }
-
-  const loginForm = $("loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const loginEmail = $("loginEmail");
-      const loginPassword = $("loginPassword");
-
-      const success = loginUser(
-        loginEmail.value.trim(),
-        loginPassword.value.trim()
-      );
-
-      if (!success) {
-        alert("Invalid email or password!");
-        return;
-      }
-
-      window.location.href = "index.html";
-    });
-  }
-
-  function loadProfile() {
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
-    const box = $("profileBox");
-
-    if (box && user) {
-      box.innerHTML = `
-            <p class="fs-5"><strong>Name:</strong> ${user.name}</p>
-            <p class="fs-5"><strong>Email:</strong> ${user.email}</p>
-            `;
-    }
-  }
-
-  loadProfile();
-
-  (function protectIndexPage() {
-    if (window.location.pathname.includes("index.html")) {
-      const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-      if (!loggedInUser) {
-        window.location.href = "login.html";
-      }
-    }
-  })();
-
-  (function protectPrivatePages() {
-    const PUBLIC_PAGES = ["login.html", "register.html", "signup.html"];
-    const currentPage = window.location.pathname.split("/").pop();
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-
-    if (!PUBLIC_PAGES.includes(currentPage)) {
-      if (!loggedInUser) {
-        window.location.href = "login.html";
-      }
-    }
-  })();
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const navAuthLinks = document.getElementById("navAuthLinks");
-  const navUserDropdown = document.getElementById("navUserDropdown");
-  const navUserName = document.getElementById("navUserName");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const profileNavItem = document.getElementById("profileNavItem");
-
-  const user = JSON.parse(localStorage.getItem("loggedInUser"));
-
-  if (user && user.name) {
-    navAuthLinks?.classList.add("d-none");
-    navUserDropdown?.classList.remove("d-none");
-    profileNavItem.style.display = "block";
-    if (navUserName) navUserName.textContent = user.name;
-  } else {
-    navAuthLinks?.classList.remove("d-none");
-    navUserDropdown?.classList.add("d-none");
-    profileNavItem.style.display = "none";
-  }
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("loggedInUser");
-      location.reload();
-    });
   }
 });
-document.addEventListener("DOMContentLoaded", () => {
-  const profileBox = document.getElementById("profileBox");
-  const userInfo = document.getElementById("user-info");
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  const user = JSON.parse(localStorage.getItem("loggedInUser"));
-
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  if (userInfo) {
-    userInfo.textContent = `Welcome, ${user.name} 👋`;
-  }
-
-  if (profileBox) {
-    profileBox.innerHTML = `
-            <p><strong>Name:</strong> ${user.name}</p>
-            <p><strong>Email:</strong> ${user.email}</p>
-            `;
-  }
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("loggedInUser");
-      window.location.href = "login.html";
-    });
-  }
-});
-const profileForm = document.getElementById("profileForm");
-
-if (profileForm && user) {
-  document.getElementById("profileName").value = user.name;
-  document.getElementById("profileEmail").value = user.email;
-
-  profileForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const newName = document.getElementById("profileName").value.trim();
-    const newEmail = document.getElementById("profileEmail").value.trim();
-    const newPassword = document.getElementById("profilePassword").value;
-
-    if (!newName || !newEmail) {
-      alert("Name and email cannot be empty.");
-      return;
-    }
-
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    if (!emailRegex.test(newEmail)) {
-      alert("Please enter a valid email.");
-      return;
-    }
-
-    let updatedUser = { ...user, name: newName, email: newEmail };
-
-    if (newPassword.trim() !== "") {
-      updatedUser.password = newPassword;
-    }
-
-    localStorage.setItem("traveloraUser", JSON.stringify(updatedUser));
-    localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
-
-    alert("Profile updated successfully!");
-
-    document.getElementById("profilePassword").value = "";
-
-    const navUserName = document.getElementById("navUserName");
-    if (navUserName) navUserName.textContent = updatedUser.name;
-
-    const userInfo = document.getElementById("user-info");
-    if (userInfo) userInfo.textContent = `Welcome, ${updatedUser.name} 👋`;
-  });
-}
