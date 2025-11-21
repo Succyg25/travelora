@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     profileForm.addEventListener("submit", (e) => {
       e.preventDefault();
+
       const newName = $("profileName").value.trim();
       const newEmail = $("profileEmail").value.trim();
       const newPassword = $("profilePassword").value;
@@ -96,20 +97,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!newName || !newEmail) return alert("Name and email required.");
       if (!isEmail(newEmail)) return alert("Invalid email.");
 
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+      const index = users.findIndex((u) => u.email === user.email);
+
       const updated = { ...user, name: newName, email: newEmail };
       if (newPassword) updated.password = newPassword;
 
-      localStorage.setItem("traveloraUser", JSON.stringify(updated));
+      users[index] = updated;
+
+      localStorage.setItem("users", JSON.stringify(users));
       localStorage.setItem("loggedInUser", JSON.stringify(updated));
 
       alert("Profile updated!");
       $("profilePassword").value = "";
 
       if (navUserName) navUserName.textContent = newName;
-      if (userInfo)
-        userInfo.innerHTML = `Welcome, <strong>${escapeHtml(
-          newName
-        )}</strong> 👋`;
     });
   }
 
@@ -117,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (signupForm) {
     signupForm.addEventListener("submit", (e) => {
       e.preventDefault();
+
       const name = $("signupName").value.trim();
       const email = $("signupEmail").value.trim();
       const password = $("signupPassword").value.trim();
@@ -124,10 +127,18 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!name || !email || !password) return alert("All fields required.");
       if (!isEmail(email)) return alert("Invalid email.");
 
-      localStorage.setItem(
-        "traveloraUser",
-        JSON.stringify({ name, email, password })
-      );
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+
+      if (users.some((u) => u.email === email)) {
+        alert("Email already registered.");
+        return;
+      }
+
+      const newUser = { name, email, password };
+      users.push(newUser);
+
+      localStorage.setItem("users", JSON.stringify(users));
+
       alert("Account created! Please login.");
       window.location.href = "login.html";
     });
@@ -137,16 +148,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
+
       const email = $("loginEmail").value.trim();
       const password = $("loginPassword").value.trim();
 
-      const saved = JSON.parse(localStorage.getItem("traveloraUser"));
-      if (!saved || saved.email !== email || saved.password !== password) {
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+      const found = users.find(
+        (u) => u.email === email && u.password === password
+      );
+
+      if (!found) {
         alert("Invalid email or password!");
         return;
       }
 
-      localStorage.setItem("loggedInUser", JSON.stringify(saved));
+      localStorage.setItem("loggedInUser", JSON.stringify(found));
       window.location.href = "index.html";
     });
   }
