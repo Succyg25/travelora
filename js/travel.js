@@ -1,19 +1,27 @@
+const protectedPages = [
+  "dashboard.html",
+  "profile.html",
+  "mybookings.html",
+  "confirmation.html",
+];
+
+const currentPage = window.location.pathname.split("/").pop();
+
+if (protectedPages.includes(currentPage)) {
+  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+
+  if (!loggedInUser) {
+    alert("Please log in first to access this page.");
+    window.location.replace("login.html");
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const $ = (id) => document.getElementById(id);
-  const qs = (sel) => document.querySelector(sel);
-  const qsa = (sel) => Array.from(document.querySelectorAll(sel));
-
   const safeText = (el, value) => el && (el.textContent = value);
+
   const isEmail = (v) => /^\S+@\S+\.\S+$/.test(v);
   const isDigits = (v) => /^\d+$/.test(v);
-
-  const calcDays = (start, end) => {
-    const s = new Date(start);
-    const e = new Date(end);
-    const diff = e - s;
-    if (isNaN(diff) || diff <= 0) return 0;
-    return Math.ceil(diff / (1000 * 60 * 60 * 24));
-  };
 
   const escapeHtml = (str) =>
     String(str ?? "")
@@ -22,6 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
+
+  const calcDays = (start, end) => {
+    const s = new Date(start);
+    const e = new Date(end);
+    const diff = e - s;
+    if (isNaN(diff) || diff <= 0) return 0;
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  };
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
@@ -34,16 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  const currentPage = window.location.pathname.split("/").pop() || "index.html";
-  const PUBLIC_PAGES = ["login.html", "register.html", "signup.html"];
-  const isPublicPage = PUBLIC_PAGES.includes(currentPage);
-
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
-
-  if (!isPublicPage && !user) {
-    window.location.replace("login.html");
-    return;
-  }
 
   const navAuthLinks = $("navAuthLinks");
   const navUserDropdown = $("navUserDropdown");
@@ -53,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (user && user.name) {
     navAuthLinks?.classList.add("d-none");
     navUserDropdown?.classList.remove("d-none");
-    if (navUserName) navUserName.textContent = user.name;
+    navUserName.textContent = user.name;
     if (profileNavItem) profileNavItem.style.display = "block";
   } else {
     navAuthLinks?.classList.remove("d-none");
@@ -67,20 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "login.html";
     });
   });
-
-  const userInfo = $("user-info");
-  if (userInfo && user) {
-    userInfo.innerHTML = `Welcome, <strong>${escapeHtml(
-      user.name
-    )}</strong> 👋`;
-  }
-
-  if ($("profileBox") && user) {
-    $("profileBox").innerHTML = `
-      <p class="fs-5"><strong>Name:</strong> ${escapeHtml(user.name)}</p>
-      <p class="fs-5"><strong>Email:</strong> ${escapeHtml(user.email)}</p>
-    `;
-  }
 
   const profileForm = $("profileForm");
   if (profileForm && user) {
@@ -110,8 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Profile updated!");
       $("profilePassword").value = "";
-
-      if (navUserName) navUserName.textContent = newName;
+      navUserName.textContent = newName;
     });
   }
 
@@ -134,9 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const newUser = { name, email, password };
-      users.push(newUser);
-
+      users.push({ name, email, password });
       localStorage.setItem("users", JSON.stringify(users));
 
       alert("Account created! Please login.");
@@ -157,10 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
         (u) => u.email === email && u.password === password
       );
 
-      if (!found) {
-        alert("Invalid email or password!");
-        return;
-      }
+      if (!found) return alert("Invalid email or password!");
 
       localStorage.setItem("loggedInUser", JSON.stringify(found));
       window.location.href = "index.html";
@@ -169,16 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const bookingForm = $("bookingForm");
   if (bookingForm) {
-    const nameEl = $("fullName") || $("name");
-    const emailEl = $("email");
-    const phoneEl = $("phone");
     const destEl = $("destination");
     const travelersEl = $("travelers");
     const startEl = $("startDate");
     const endEl = $("endDate");
-    const totalEl =
-      $("totalCost") || $("totalCostDisplay") || qs(".total-display");
     const basePriceEl = $("basePrice");
+    const totalEl = $("totalCost");
 
     const updateBasePrice = () => {
       if (!destEl) return;
@@ -192,58 +175,48 @@ document.addEventListener("DOMContentLoaded", () => {
       const days = calcDays(startEl?.value, endEl?.value) || 1;
       const total = base * travelers * days;
 
-      if (totalEl) {
-        safeText(
-          totalEl,
-          `$${total.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}`
-        );
-      }
+      safeText(
+        totalEl,
+        `$${total.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`
+      );
     };
 
-    const addOneDay = (dateStr) => {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + 1);
-      return d.toISOString().split("T")[0];
-    };
-
-    const fixEndDate = () => {
-      if (!startEl?.value || !endEl) return;
-      const start = new Date(startEl.value);
-      const end = new Date(endEl.value);
-      if (isNaN(end) || end <= start) {
-        endEl.value = addOneDay(startEl.value);
+    const autoFixEndDate = () => {
+      if (!startEl.value) return;
+      const s = new Date(startEl.value);
+      const e = new Date(endEl.value);
+      if (isNaN(e) || e <= s) {
+        s.setDate(s.getDate() + 1);
+        endEl.value = s.toISOString().split("T")[0];
       }
     };
 
     updateBasePrice();
-    fixEndDate();
+    autoFixEndDate();
     updateTotal();
 
-    destEl?.addEventListener("change", () => {
+    destEl.addEventListener("change", () => {
       updateBasePrice();
       updateTotal();
     });
-    startEl?.addEventListener("change", () => {
-      fixEndDate();
+    startEl.addEventListener("change", () => {
+      autoFixEndDate();
       updateTotal();
     });
-    endEl?.addEventListener("change", () => {
-      fixEndDate();
-      updateTotal();
-    });
-    travelersEl?.addEventListener("input", updateTotal);
+    endEl.addEventListener("change", updateTotal);
+    travelersEl.addEventListener("input", updateTotal);
 
     bookingForm.addEventListener("submit", (e) => {
       e.preventDefault();
 
       const booking = {
         id: Date.now(),
-        fullName: nameEl.value.trim(),
-        email: emailEl.value.trim(),
-        phone: phoneEl.value.trim(),
+        fullName: $("fullName").value.trim(),
+        email: $("email").value.trim(),
+        phone: $("phone").value.trim(),
         destination: destEl.value,
         travelers: parseInt(travelersEl.value),
         startDate: startEl.value,
@@ -252,18 +225,11 @@ document.addEventListener("DOMContentLoaded", () => {
         bookedAt: new Date().toISOString(),
       };
 
-      if (
-        !booking.fullName ||
-        !booking.email ||
-        !booking.phone ||
-        !booking.destination ||
-        !booking.startDate ||
-        !booking.endDate
-      ) {
+      if (!booking.fullName || !booking.email || !booking.phone)
         return alert("Please fill all fields.");
-      }
+
       if (!isEmail(booking.email)) return alert("Invalid email.");
-      if (!isDigits(booking.phone)) return alert("Phone must be digits only.");
+      if (!isDigits(booking.phone)) return alert("Phone must contain digits.");
 
       const days = calcDays(booking.startDate, booking.endDate);
       if (days <= 0) return alert("End date must be after start date.");
@@ -271,8 +237,9 @@ document.addEventListener("DOMContentLoaded", () => {
       booking.days = days;
       booking.totalCost = booking.basePrice * booking.travelers * days;
 
-      const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
       bookings.push(booking);
+
       localStorage.setItem("bookings", JSON.stringify(bookings));
       localStorage.setItem("latestBooking", JSON.stringify(booking));
 
@@ -280,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (window.location.pathname.includes("confirmation.html")) {
+  if (currentPage === "confirmation.html") {
     setTimeout(() => {
       const booking = JSON.parse(localStorage.getItem("latestBooking"));
       if (!booking) return;
@@ -306,10 +273,12 @@ document.addEventListener("DOMContentLoaded", () => {
       $("downloadReceipt")?.addEventListener("click", () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
+
         doc.setFontSize(18);
-        doc.text("Travelora Booking Receipt", 20, 25);
+        doc.text("Travelora Booking Receipt", 20, 20);
+
         doc.setFontSize(12);
-        let y = 45;
+        let y = 40;
         [
           `Name: ${booking.fullName}`,
           `Email: ${booking.email}`,
@@ -323,6 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
           doc.text(line, 20, y);
           y += 8;
         });
+
         doc.save("Travelora_Receipt.pdf");
       });
     }, 100);
@@ -332,40 +302,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const clearAllBtn = $("clear-all");
 
   if (bookingsList) {
-    const renderBookings = () => {
+    const render = () => {
       let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-      if (bookings.length === 0) {
+
+      if (!bookings.length) {
         bookingsList.innerHTML = `<p class="text-muted">No bookings found.</p>`;
         if (clearAllBtn) clearAllBtn.disabled = true;
         return;
       }
-      if (clearAllBtn) clearAllBtn.disabled = false;
 
       bookingsList.innerHTML = "";
+      clearAllBtn.disabled = false;
+
       bookings.forEach((b, i) => {
         const card = document.createElement("div");
         card.className = "col-12 col-md-8 col-lg-6 mb-3";
+
         card.innerHTML = `
           <div class="card shadow-sm">
             <div class="card-body">
-              <h5 class="card-title">${escapeHtml(b.destination)}</h5>
-              <p class="card-text mb-1"><strong>Name:</strong> ${escapeHtml(
-                b.fullName
-              )}</p>
-              <p class="card-text mb-1"><strong>Email:</strong> ${escapeHtml(
-                b.email
-              )}</p>
-              <p class="card-text mb-1"><strong>Travelers:</strong> ${
-                b.travelers
-              }</p>
-              <p class="card-text mb-1"><strong>Dates:</strong> ${formatDate(
+              <h5>${escapeHtml(b.destination)}</h5>
+              <p><strong>Name:</strong> ${escapeHtml(b.fullName)}</p>
+              <p><strong>Email:</strong> ${escapeHtml(b.email)}</p>
+              <p><strong>Travelers:</strong> ${b.travelers}</p>
+              <p><strong>Dates:</strong> ${formatDate(
                 b.startDate
               )} → ${formatDate(b.endDate)}</p>
-              <p class="card-text mb-3"><strong>Total Cost:</strong> $${b.totalCost.toLocaleString()}</p>
-              <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-danger btn-sm delete-btn">Delete</button>
-                <button class="btn btn-primary btn-sm download-btn">Download Receipt</button>
-              </div>
+              <p><strong>Total Cost:</strong> $${b.totalCost.toLocaleString()}</p>
+              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+              <button class="btn btn-primary btn-sm download-btn">Download Receipt</button>
             </div>
           </div>
         `;
@@ -373,14 +338,16 @@ document.addEventListener("DOMContentLoaded", () => {
         card.querySelector(".delete-btn").addEventListener("click", () => {
           bookings.splice(i, 1);
           localStorage.setItem("bookings", JSON.stringify(bookings));
-          renderBookings();
+          render();
         });
 
         card.querySelector(".download-btn").addEventListener("click", () => {
           const { jsPDF } = window.jspdf;
           const doc = new jsPDF();
+
           doc.setFontSize(18);
           doc.text("Travelora Booking Receipt", 20, 25);
+
           doc.setFontSize(12);
           let y = 45;
           [
@@ -394,22 +361,21 @@ document.addEventListener("DOMContentLoaded", () => {
             doc.text(line, 20, y);
             y += 8;
           });
-          doc.save(`Travelora_Receipt_${b.id || i}.pdf`);
+
+          doc.save(`Travelora_Receipt_${b.id}.pdf`);
         });
 
         bookingsList.appendChild(card);
       });
     };
 
-    if (clearAllBtn) {
-      clearAllBtn.addEventListener("click", () => {
-        if (confirm("Delete all bookings?")) {
-          localStorage.removeItem("bookings");
-          renderBookings();
-        }
-      });
-    }
+    clearAllBtn?.addEventListener("click", () => {
+      if (confirm("Delete all bookings?")) {
+        localStorage.removeItem("bookings");
+        render();
+      }
+    });
 
-    renderBookings();
+    render();
   }
 });
